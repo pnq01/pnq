@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 import uvicorn
 from pydantic import BaseModel
 
@@ -9,6 +10,11 @@ books = [
     {"id": 1, "title": "GRokaem algo", "author": "Ne pomnu"},
     {"id": 2, "title": "Linux and base", "author": "Danil Pa"},
 ]
+
+
+@app.get("/", summary="начальная страница", tags=["Главная"])
+def root():
+    return FileResponse('index.html')
 
 
 @app.get("/books", summary="Получение книжек", tags=["Книги"])
