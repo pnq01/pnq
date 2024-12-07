@@ -1,50 +1,75 @@
-from fastapi import FastAPI, HTTPException
+from typing import Annotated
+from fastapi import FastAPI, Depends
 from fastapi.responses import FileResponse
 import uvicorn
-from pydantic import BaseModel
 
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 app = FastAPI()
 
-books = [
-    {"id": 1, "title": "GRokaem algo", "author": "Ne pomnu"},
-    {"id": 2, "title": "Linux and base", "author": "Danil Pa"},
-]
+engine = create_async_engine("sqlite+aiosqlite:///books.db")
+
+new_session = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def get_session():
+    async with new_session() as session:
+        yield session
+
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class BookModel(Base):
+    __tablename__ = "books"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str]
+    author: Mapped[str]
 
 
 @app.get("/", summary="начальная страница", tags=["Главная"])
 def root():
-    return FileResponse('index.html')
+    return FileResponse("index.html")
 
 
-@app.get("/books", summary="Получение книжек", tags=["Книги"])
-def read_books():
-    return books
+@app.post("/setup_database")
+async def setup_database():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    return {"success": True}
 
 
-@app.get("/books/{book_id}", summary="Получение конкретной книжки", tags=["Книги"])
-def get_one_book(book_id: int):
-    for book in books:
-        if book["id"] == book_id:
-            return book
-    raise HTTPException(status_code=404, detail="Книга не найдена")
-
-
-class NewBook(BaseModel):
+class BookAddSchema(BaseModel):
     title: str
     author: str
 
 
-@app.post("/books", summary="Добавление книжки", tags=["Книги"])
-def add_book(new_book: NewBook):
-    books.append(
-        {
-            "id": len(books) + 1,
-            "title": new_book.title,
-            "author": new_book.author,
-        }
-    )
+class BookSchema(BookAddSchema):
+    id: int
+
+
+@app.post("/books")
+async def create_book(data: BookAddSchema, session: SessionDep):
+    new_book = BookModel(title=data.title, author=data.author)
+    session.add(new_book)
+    await session.commit()
     return {"success": True}
+
+
+@app.get("/books")
+async def get_books(session: SessionDep):
+    query = select(BookModel)
+    result = await session.execute(query)
+    return result.scalars().all()
 
 
 if __name__ == "__main__":
