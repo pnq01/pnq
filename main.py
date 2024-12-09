@@ -1,7 +1,8 @@
 from typing import Annotated
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import FileResponse
 import uvicorn
+from authx import AuthX, AuthXConfig
 
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -9,6 +10,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 app = FastAPI()
+
+config = AuthXConfig()
+
+config.JWT_SECRET_KEY = "SECRET_KEY"
+config.JWT_ACCESS_COOKIE_NAME = "my_access_cookie"
+config.JWT_TOKEN_LOCATION = ["cookies"]
+security = AuthX(config=config)
 
 engine = create_async_engine("sqlite+aiosqlite:///books.db")
 
@@ -72,5 +80,24 @@ async def get_books(session: SessionDep):
     return result.scalars().all()
 
 
+class UserLoginSchema(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/login", tags=["Авторизация"])
+async def login(creds: UserLoginSchema, response: Response):
+    if creds.username == "test" and creds.password == "test":
+        token = security.create_access_token(uid="12345")
+        response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
+        return {"access_token": token}
+    raise HTTPException(status_code=401, detail="Incorrect username or password")
+
+
+@app.get("/protected", dependencies=[Depends(security.access_token_required)], tags=["Авторизация"])
+async def protected():
+    return {"access_permission": True}
+
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app")
