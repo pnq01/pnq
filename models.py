@@ -9,7 +9,7 @@ import enum
 from database import Base
 
 
-class CheckAuthor(enum.Enum):
+class CheckAuthor(str, enum.Enum):
     author = "yes"
     not_author = "no"
 

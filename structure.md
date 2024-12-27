@@ -1,6 +1,6 @@
 my_fastapi_project/
 │
-├── app/
+├── src/
 │   ├── main.py                    # Основной файл приложения (точка входа)
 │   ├── models/                    # Модели данных (например, SQLAlchemy модели)
 │   │   ├── __init__.py
