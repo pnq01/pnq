@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from models import CheckAuthor
+from src.models import CheckAuthor
 
 
 class UserGetSchema(BaseModel):
@@ -7,7 +7,7 @@ class UserGetSchema(BaseModel):
     is_author: CheckAuthor
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserAddSchema(UserGetSchema):
