@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.models import CheckAuthor
+from src.db.models import CheckAuthor
 
 
 class UserGetSchema(BaseModel):
