@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
-from src.schemas import UserSchema, UserAddSchema, UserGetSchema
-from src.repository import UserRepository
+from src.api.schemas.schemas import UserSchema, UserAddSchema, UserGetSchema
+from src.repositories.repository import UserRepository
 
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 
