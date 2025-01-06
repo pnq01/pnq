@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from src.db.models import CheckAuthor, IsPublished, User
 
 
+# Пользователи
 class UserBaseSchema(BaseModel):
     login: str
 
@@ -15,20 +16,52 @@ class UserCreateSchema(UserBaseSchema):
 
 class UserSchema(UserBaseSchema):
     id: int
+    is_author: CheckAuthor
 
 
-# class ArticleBaseSchema(BaseModel):
-#     title: str
-#     content: str
-#     is_published: IsPublished
+# Посты
+class ArticleBaseSchema(BaseModel):
+    title: str
+    content: str
+
+    class Config:
+        from_attributes = True
 
 
-# class ArticleCreateSchema(ArticleBaseSchema):
-#     author_id: int
+class ArticleCreateSchema(ArticleBaseSchema):
+    author_id: User
+    # category_id: int
+    # tags: list[int]
 
 
-# class ArticleSchema(ArticleBaseSchema):
-#     id: int
+class ArticleSchema(ArticleBaseSchema):
+    id: int
+    is_published: IsPublished
 
-#     class Config:
-#         from_attributes = True
+
+# Категории
+class CategoryBaseSchema(BaseModel):
+    ...
+
+    class Config:
+        from_attributes = True
+
+
+class CategoryCreateSchema(CategoryBaseSchema): ...
+
+
+class CategorySchema(CategoryBaseSchema): ...
+
+
+# Теги
+class TagBaseSchema(BaseModel):
+    ...
+
+    class Config:
+        from_attributes = True
+
+
+class TagCreateSchema(TagBaseSchema): ...
+
+
+class TagSchema(TagBaseSchema): ...
