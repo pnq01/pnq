@@ -16,8 +16,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 #         user_model = User(**user_dict)
 #         session.add(user_model)
 #         await session.flush()
-#         # После того как мы делаем флюш у нас запрос исполняется и все изменения сессии добавятся
-#         # в бд перед комитом уже и после этого у нас будет первичный ключ который мы выводим после коммита
 #         await session.commit()
 #         return user_model.id
 
