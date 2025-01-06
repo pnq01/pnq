@@ -1,18 +1,35 @@
 from pydantic import BaseModel
-from src.db.models import CheckAuthor
+from src.db.models import CheckAuthor, IsPublished, User
 
 
-class UserGetSchema(BaseModel):
+class UserBaseSchema(BaseModel):
     login: str
     is_author: CheckAuthor
+
+
+class UserCreateSchema(UserBaseSchema):
+    password: str
+
+
+class UserSchema(UserBaseSchema):
+    id: int
 
     class Config:
         from_attributes = True
 
 
-class UserAddSchema(UserGetSchema):
-    password: str
+class ArticleBaseSchema(BaseModel):
+    title: str
+    content: str
+    is_published: IsPublished
 
 
-class UserSchema(UserAddSchema):
+class ArticleCreateSchema(ArticleBaseSchema):
+    author_id: int
+
+
+class ArticleSchema(ArticleBaseSchema):
     id: int
+
+    class Config:
+        from_attributes = True
