@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
-from src.api.user_router import router as user_router
+from api.routers.user_router import router as user_router
 
 
 app = FastAPI()
