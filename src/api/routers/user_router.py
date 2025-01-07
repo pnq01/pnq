@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
-
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.schemas.schemas import UserCreateSchema, UserSchema
 from src.db.models import User
 from src.db.database import get_async_session
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 

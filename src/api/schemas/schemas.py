@@ -19,49 +19,53 @@ class UserSchema(UserBaseSchema):
     is_author: CheckAuthor
 
 
-# Посты
-class ArticleBaseSchema(BaseModel):
-    title: str
-    content: str
-
-    class Config:
-        from_attributes = True
-
-
-class ArticleCreateSchema(ArticleBaseSchema):
-    author_id: User
-    # category_id: int
-    # tags: list[int]
-
-
-class ArticleSchema(ArticleBaseSchema):
-    id: int
-    is_published: IsPublished
-
-
-# Категории
-class CategoryBaseSchema(BaseModel):
-    ...
-
-    class Config:
-        from_attributes = True
-
-
-class CategoryCreateSchema(CategoryBaseSchema): ...
-
-
-class CategorySchema(CategoryBaseSchema): ...
+# # Категории
+# class CategoryBaseSchema(BaseModel):
+#     ...
+#
+#     class Config:
+#         from_attributes = True
+#
+#
+# class CategoryCreateSchema(CategoryBaseSchema): ...
+#
+#
+# class CategorySchema(CategoryBaseSchema): ...
+#
+#
 
 
 # Теги
 class TagBaseSchema(BaseModel):
-    ...
+    tag: str
 
     class Config:
         from_attributes = True
 
 
-class TagCreateSchema(TagBaseSchema): ...
+class TagCreateSchema(TagBaseSchema):
+    pass
 
 
-class TagSchema(TagBaseSchema): ...
+class TagSchema(TagBaseSchema):
+    id: int
+
+
+# Посты
+# class ArticleBaseSchema(BaseModel):
+#     title: str
+#     content: str
+
+#     class Config:
+#         from_attributes = True
+
+
+# class ArticleCreateSchema(ArticleBaseSchema):
+#     author_id: "UserSchema"  # int или UserSchema
+#     tags: list[TagBaseSchema]
+#     # category_id: int
+
+
+# class ArticleSchema(ArticleBaseSchema):
+#     id: int
+#     is_published: IsPublished

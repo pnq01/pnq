@@ -33,6 +33,27 @@ class IsPublished(enum.Enum):
     nonpublished = "nonpublished"
 
 
+class Tag(Base):
+    __tablename__ = "tag"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tag: Mapped[str] = mapped_column(nullable=False, index=True)
+
+    articles: Mapped[list["Article"]] = relationship(
+        back_populates="mark_tags",
+        secondary="article_tag",
+    )
+
+
+# class Category(Base):
+#     __tablename__ = "category"
+#
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(nullable=False, index=True)
+#
+#     articles: Mapped[list["Article"]] = relationship(back_populates="category")
+
+
 class Article(Base):
     __tablename__ = "article"
     __table_args__ = {"extend_existing": True}
@@ -43,7 +64,7 @@ class Article(Base):
     is_published: Mapped[IsPublished] = mapped_column(default=IsPublished.nonpublished)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     # category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
-    # tags: Mapped[]
+    # tags: Mapped[Tag]
     date: Mapped[datetime] = mapped_column(default=func.now())
 
     # category: Mapped["Category"] = relationship(back_populates="articles")
@@ -52,27 +73,6 @@ class Article(Base):
     )
     mark_tags: Mapped[list["Tag"]] = relationship(
         back_populates="articles",
-        secondary="article_tag",
-    )
-
-
-class Category(Base):
-    __tablename__ = "category"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False, index=True)
-
-    articles: Mapped[list["Article"]] = relationship(back_populates="category")
-
-
-class Tag(Base):
-    __tablename__ = "tag"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    tag: Mapped[str] = mapped_column(nullable=False, index=True)
-
-    articles: Mapped[list["Article"]] = relationship(
-        back_populates="mark_tags",
         secondary="article_tag",
     )
 
