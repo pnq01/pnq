@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
-from src.api.schemas.schemas import UserCreateSchema
+
+from sqlalchemy import select
+
+from src.api.schemas.schemas import UserCreateSchema, UserSchema
 from src.db.models import User
 from src.db.database import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 
 
-@router.post("")
+@router.post("/")
 async def create_user(
     user: Annotated[UserCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -22,13 +25,16 @@ async def create_user(
     return {"success": True}
 
 
-# @router.get("")
-# async def get_users():
-#     await UserRepository.get_user()
-#     return {"ok": True}
+@router.get("/", response_model=list[UserSchema])
+async def get_all_users(session: AsyncSession = Depends(get_async_session)):
+    users = await session.execute(select(User))
+    return users.scalars().all()
 
 
-# @router.get("/{user_id}")
-# async def get_user(user_id):
-#     ///
-#     return {"user": user}
+@router.get("/{user_id}", response_model=UserSchema)
+async def get_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
+    user_id = await session.get(User, user_id)
+
+    if not user_id:
+        raise HTTPException(status_code=404, detail="Сотрудник не найден")
+    return user_id
