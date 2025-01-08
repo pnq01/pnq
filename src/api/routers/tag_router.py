@@ -30,10 +30,10 @@ async def get_all_tags(session: AsyncSession = Depends(get_async_session)):
     return tags.scalars().all()
 
 
-# @router.get("/{tag_id}", response_model=TagSchema)
-# async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session)):
-#     tag_id = await session.execute(select(Tag))
+@router.get("/{tag_id}", response_model=TagSchema)
+async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session)):
+    tag_id = await session.get(Tag, tag_id)
 
-#     if not tag_id:
-#         raise HTTPException(status_code=404, detail="Тег не найден")
-#     return tag_id
+    if not tag_id:
+        raise HTTPException(status_code=404, detail="Тег не найден")
+    return tag_id
