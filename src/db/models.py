@@ -62,7 +62,7 @@ class Article(Base):
     title: Mapped[str] = mapped_column(index=True)
     content: Mapped[str] = mapped_column(nullable=False)
     is_published: Mapped[IsPublished] = mapped_column(default=IsPublished.nonpublished)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
     date: Mapped[datetime] = mapped_column(default=func.now())
 

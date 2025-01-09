@@ -24,7 +24,7 @@ async def create_tag(
     return {"success": True, "tag": tag}
 
 
-@router.get("/", response_model=list[TagBaseSchema])
+@router.get("/", response_model=list[TagSchema])
 async def get_all_tags(session: AsyncSession = Depends(get_async_session)):
     tags = await session.execute(select(Tag))
     return tags.scalars().all()

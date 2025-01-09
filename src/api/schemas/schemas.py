@@ -59,6 +59,10 @@ class ArticleBaseSchema(BaseModel):
     tags: list[int]
     category_id: int
 
+    category: CategoryBaseSchema = None
+    user: UserBaseSchema = None
+    mark_tags: list[TagBaseSchema] = []
+
     class Config:
         from_attributes = True
 
