@@ -35,5 +35,26 @@ async def get_user(user_id: int, session: AsyncSession = Depends(get_async_sessi
     user_id = await session.get(User, user_id)
 
     if not user_id:
-        raise HTTPException(status_code=404, detail="Сотрудник не найден")
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user_id
+
+
+@router.post("/{user_id}")
+async def update_user_password(
+    user_id: int, new_pass: str, session: AsyncSession = Depends(get_async_session)
+):
+    user = await session.execute(select(User, user_id))
+    user.password = new_pass
+    await session.commit()
+    return {"new_password_set": True}
+
+
+@router.delete("/{user_id}")
+async def delete_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
+    user = await session.get(User, user_id)
+
+    if user == None:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    await session.delete(user)
+    await session.commit()
+    return {"succes_delete": True}

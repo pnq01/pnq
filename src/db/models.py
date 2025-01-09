@@ -45,13 +45,13 @@ class Tag(Base):
     )
 
 
-# class Category(Base):
-#     __tablename__ = "category"
-#
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     name: Mapped[str] = mapped_column(nullable=False, index=True)
-#
-#     articles: Mapped[list["Article"]] = relationship(back_populates="category")
+class Category(Base):
+    __tablename__ = "category"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False, index=True)
+
+    # articles: Mapped[list["Article"]] = relationship(back_populates="category")
 
 
 class Article(Base):
@@ -64,7 +64,7 @@ class Article(Base):
     is_published: Mapped[IsPublished] = mapped_column(default=IsPublished.nonpublished)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     # category_id: Mapped[int] = mapped_column(ForeignKey("category.id"))
-    # tags: Mapped[Tag]
+    # tags: Mapped["Tag"]
     date: Mapped[datetime] = mapped_column(default=func.now())
 
     # category: Mapped["Category"] = relationship(back_populates="articles")

@@ -19,20 +19,20 @@ class UserSchema(UserBaseSchema):
     is_author: CheckAuthor
 
 
-# # Категории
-# class CategoryBaseSchema(BaseModel):
-#     ...
-#
-#     class Config:
-#         from_attributes = True
-#
-#
-# class CategoryCreateSchema(CategoryBaseSchema): ...
-#
-#
-# class CategorySchema(CategoryBaseSchema): ...
-#
-#
+# Категории
+class CategoryBaseSchema(BaseModel):
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class CategoryCreateSchema(CategoryBaseSchema):
+    pass
+
+
+class CategorySchema(CategoryBaseSchema):
+    id: int
 
 
 # Теги
