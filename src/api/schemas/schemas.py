@@ -52,20 +52,21 @@ class TagSchema(TagBaseSchema):
 
 
 # Посты
-# class ArticleBaseSchema(BaseModel):
-#     title: str
-#     content: str
+class ArticleBaseSchema(BaseModel):
+    title: str
+    content: str
+    author_id: int
+    tags: list[int]
+    category_id: int
 
-#     class Config:
-#         from_attributes = True
-
-
-# class ArticleCreateSchema(ArticleBaseSchema):
-#     author_id: "UserSchema"  # int или UserSchema
-#     tags: list[TagBaseSchema]
-#     # category_id: int
+    class Config:
+        from_attributes = True
 
 
-# class ArticleSchema(ArticleBaseSchema):
-#     id: int
-#     is_published: IsPublished
+class ArticleCreateSchema(ArticleBaseSchema):
+    pass
+
+
+class ArticleSchema(ArticleBaseSchema):
+    id: int
+    is_published: IsPublished

@@ -21,7 +21,7 @@ async def create_user(
     session.add(user_model)
     await session.commit()
 
-    return {"success": True}
+    return {"success": True, "user": user}
 
 
 @router.get("/", response_model=list[UserSchema])
@@ -32,11 +32,11 @@ async def get_all_users(session: AsyncSession = Depends(get_async_session)):
 
 @router.get("/{user_id}", response_model=UserSchema)
 async def get_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
-    user_id = await session.get(User, user_id)
+    user = await session.get(User, user_id)
 
-    if not user_id:
+    if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
-    return user_id
+    return user
 
 
 @router.post("/{user_id}")
@@ -49,7 +49,7 @@ async def update_user_password(
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     user.password = new_pass
     await session.commit()
-    return {"new_password_set": True}
+    return {"new_password_set": True, "user": user}
 
 
 @router.delete("/{user_id}")

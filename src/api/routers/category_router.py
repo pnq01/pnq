@@ -32,7 +32,7 @@ async def get_all_categorys(session: AsyncSession = Depends(get_async_session)):
     return categorys.scalars().all()
 
 
-@router.get("/{category_id}")
+@router.get("/{category_id}", response_model=CategorySchema)
 async def get_category(
     category_id: int, session: AsyncSession = Depends(get_async_session)
 ):
@@ -40,7 +40,7 @@ async def get_category(
 
     if not category:
         raise HTTPException(status_code=404, detail="Сотрудник не найден")
-    return {"category": category}
+    return category
 
 
 @router.post("/{category_id}")

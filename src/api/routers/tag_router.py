@@ -21,7 +21,7 @@ async def create_tag(
     session.add(tag_model)
     await session.commit()
 
-    return {"success": True}
+    return {"success": True, "tag": tag}
 
 
 @router.get("/", response_model=list[TagBaseSchema])
@@ -32,11 +32,11 @@ async def get_all_tags(session: AsyncSession = Depends(get_async_session)):
 
 @router.get("/{tag_id}", response_model=TagSchema)
 async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session)):
-    tag_id = await session.get(Tag, tag_id)
+    tag = await session.get(Tag, tag_id)
 
-    if not tag_id:
+    if not tag:
         raise HTTPException(status_code=404, detail="Тег не найден")
-    return tag_id
+    return tag
 
 
 @router.post("/{tag_id}")
@@ -49,7 +49,7 @@ async def update_tag_name(
         raise HTTPException(status_code=404, detail="Тег не найден")
     tag.tag = new_name
     await session.commit()
-    return {"new_tag_set": True}
+    return {"new_tag_set": True, "tag": tag}
 
 
 @router.delete("/{tag_id}")

@@ -13,7 +13,7 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(user_router)
 app.include_router(tag_router)
 app.include_router(category_router)
-# app.include_router(article_router)
+app.include_router(article_router)
 
 
 @app.get("/")
