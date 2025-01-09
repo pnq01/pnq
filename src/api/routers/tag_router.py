@@ -37,3 +37,27 @@ async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session
     if not tag_id:
         raise HTTPException(status_code=404, detail="Тег не найден")
     return tag_id
+
+
+@router.post("/{tag_id}")
+async def update_tag_name(
+    tag_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
+):
+    tag = await session.get(Tag, tag_id)
+
+    if tag == None:
+        raise HTTPException(status_code=404, detail="Тег не найден")
+    tag.tag = new_name
+    await session.commit()
+    return {"new_tag_set": True}
+
+
+@router.delete("/{tag_id}")
+async def delete_tag(tag_id: int, session: AsyncSession = Depends(get_async_session)):
+    tag = await session.get(Tag, tag_id)
+
+    if tag == None:
+        raise HTTPException(status_code=404, detail="Тег не найден")
+    await session.delete(tag)
+    await session.commit()
+    return {"succes_delete": True}
