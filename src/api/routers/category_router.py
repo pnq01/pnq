@@ -23,7 +23,7 @@ async def create_category(
     session.add(category_model)
     await session.commit()
 
-    return {"success": True}
+    return {"success": True, "category": category}
 
 
 @router.get("/", response_model=list[CategorySchema])
@@ -36,8 +36,34 @@ async def get_all_categorys(session: AsyncSession = Depends(get_async_session)):
 async def get_category(
     category_id: int, session: AsyncSession = Depends(get_async_session)
 ):
-    category_id = await session.get(Category, category_id)
+    category = await session.get(Category, category_id)
 
-    if not category_id:
+    if not category:
         raise HTTPException(status_code=404, detail="Сотрудник не найден")
-    return category_id
+    return {"category": category}
+
+
+@router.post("/{category_id}")
+async def update_category_name(
+    category_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
+):
+    category = await session.get(Category, category_id)
+
+    if category == None:
+        raise HTTPException(status_code=404, detail="Категория не найден")
+    category.name = new_name
+    await session.commit()
+    return {"new_category_set": True, "category": category}
+
+
+@router.delete("/{category_id}")
+async def delete_category(
+    category_id: int, session: AsyncSession = Depends(get_async_session)
+):
+    category = await session.get(Category, category_id)
+
+    if category == None:
+        raise HTTPException(status_code=404, detail="Тег не найден")
+    await session.delete(category)
+    await session.commit()
+    return {"succes_delete": True}
