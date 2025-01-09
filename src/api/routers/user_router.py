@@ -43,7 +43,10 @@ async def get_user(user_id: int, session: AsyncSession = Depends(get_async_sessi
 async def update_user_password(
     user_id: int, new_pass: str, session: AsyncSession = Depends(get_async_session)
 ):
-    user = await session.execute(select(User, user_id))
+    user = await session.get(User, user_id)
+
+    if user == None:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
     user.password = new_pass
     await session.commit()
     return {"new_password_set": True}
