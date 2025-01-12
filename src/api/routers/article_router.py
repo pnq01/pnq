@@ -29,7 +29,7 @@ async def create_article(
     return {"success": True, "article": article}
 
 
-@router.get("/", response_model=list[ArticleSchema])
+@router.get("", response_model=list[ArticleSchema])
 async def get_all_articles(session: AsyncSession = Depends(get_async_session)):
     articles = await session.execute(select(Article))
     return articles.scalars().all()

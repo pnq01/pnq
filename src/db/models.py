@@ -20,7 +20,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     login: Mapped[str] = mapped_column(unique=True)
-    password: Mapped[str]
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
     is_author: Mapped[CheckAuthor] = mapped_column(default=CheckAuthor.not_author)
 
     articles: Mapped[list["Article"]] = relationship(

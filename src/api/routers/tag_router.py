@@ -10,7 +10,7 @@ from src.db.database import get_async_session
 router = APIRouter(prefix="/tag", tags=["Тэги"])
 
 
-@router.post("/")
+@router.post("")
 async def create_tag(
     tag: Annotated[TagCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -24,7 +24,7 @@ async def create_tag(
     return {"success": True, "tag": tag}
 
 
-@router.get("/", response_model=list[TagSchema])
+@router.get("", response_model=list[TagSchema])
 async def get_all_tags(session: AsyncSession = Depends(get_async_session)):
     tags = await session.execute(select(Tag))
     return tags.scalars().all()

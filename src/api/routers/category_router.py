@@ -12,7 +12,7 @@ from src.db.models import Category
 router = APIRouter(prefix="/category", tags=["Категории"])
 
 
-@router.post("/")
+@router.post("")
 async def create_category(
     category: Annotated[CategoryCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -26,7 +26,7 @@ async def create_category(
     return {"success": True, "category": category}
 
 
-@router.get("/", response_model=list[CategorySchema])
+@router.get("", response_model=list[CategorySchema])
 async def get_all_categorys(session: AsyncSession = Depends(get_async_session)):
     categorys = await session.execute(select(Category))
     return categorys.scalars().all()
