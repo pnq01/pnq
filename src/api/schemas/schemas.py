@@ -11,7 +11,7 @@ class UserBaseSchema(BaseModel):
 
 
 class UserCreateSchema(UserBaseSchema):
-    password: str
+    hashed_password: str
 
 
 class UserSchema(UserBaseSchema):
