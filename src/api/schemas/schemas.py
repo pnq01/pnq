@@ -56,12 +56,12 @@ class ArticleBaseSchema(BaseModel):
     title: str
     content: str
     author_id: int
-    tags: list[int]
+    tag: int
     category_id: int
 
-    category: CategoryBaseSchema = None
-    user: UserBaseSchema = None
-    mark_tags: list[TagBaseSchema] = []
+    # category: CategoryBaseSchema = None
+    # user: UserBaseSchema = None
+    # mark_tags: list[TagBaseSchema] = []
 
     class Config:
         from_attributes = True
