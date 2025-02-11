@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.schemas.schemas import UserCreateSchema, UserSchema
 from src.db.models import User
 from src.db.database import get_async_session
+from src.services.auth import hashing_pass
 
 
 router = APIRouter(prefix="/user", tags=["Пользователи"])
@@ -16,13 +17,16 @@ async def create_user(
     user: Annotated[UserCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
 ):
-    user_dict = user.model_dump()
+    user_dict: dict = user.model_dump()
+    print(user_dict)
+    pass_to_change = user_dict["hashed_password"]
+    user_dict["hashed_password"] = await hashing_pass.hash_pass(pass_to_change)
 
     user_model = User(**user_dict)
     session.add(user_model)
     await session.commit()
 
-    return {"success": True, "user": user}
+    return {"success": True, "user": user_dict["login"]}
 
 
 @router.get("", response_model=list[UserSchema])
