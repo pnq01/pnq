@@ -12,7 +12,7 @@ from src.db.models import Category
 router = APIRouter(prefix="/category", tags=["Категории"])
 
 
-@router.post("")
+@router.post("", summary="Создание категории")
 async def create_category(
     category: Annotated[CategoryCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -26,13 +26,15 @@ async def create_category(
     return {"success": True, "category": category}
 
 
-@router.get("", response_model=list[CategorySchema])
+@router.get("", response_model=list[CategorySchema], summary="Получение всех категорий")
 async def get_all_categorys(session: AsyncSession = Depends(get_async_session)):
     categorys = await session.execute(select(Category))
     return categorys.scalars().all()
 
 
-@router.get("/{category_id}", response_model=CategorySchema)
+@router.get(
+    "/{category_id}", response_model=CategorySchema, summary="Получение одной категории"
+)
 async def get_category(
     category_id: int, session: AsyncSession = Depends(get_async_session)
 ):
@@ -43,7 +45,7 @@ async def get_category(
     return category
 
 
-@router.post("/{category_id}")
+@router.patch("/{category_id}", summary="Изменить имя категории")
 async def update_category_name(
     category_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
 ):
@@ -56,7 +58,7 @@ async def update_category_name(
     return {"new_category_set": True, "category": category}
 
 
-@router.delete("/{category_id}")
+@router.delete("/{category_id}", summary="Удалить категории")
 async def delete_category(
     category_id: int, session: AsyncSession = Depends(get_async_session)
 ):
