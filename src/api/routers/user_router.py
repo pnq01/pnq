@@ -12,7 +12,7 @@ from src.services.auth import hashing_pass
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 
 
-@router.post("")
+@router.post("", summary="Создание пользователя")
 async def create_user(
     user: Annotated[UserCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -29,13 +29,15 @@ async def create_user(
     return {"success": True, "user": user_dict["login"]}
 
 
-@router.get("", response_model=list[UserSchema])
+@router.get("", response_model=list[UserSchema], summary="Получение всех пользователей")
 async def get_all_users(session: AsyncSession = Depends(get_async_session)):
     users = await session.execute(select(User))
     return users.scalars().all()
 
 
-@router.get("/{user_id}", response_model=UserSchema)
+@router.get(
+    "/{user_id}", response_model=UserSchema, summary="Получение одного пользователя"
+)
 async def get_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
     user = await session.get(User, user_id)
 
@@ -44,7 +46,7 @@ async def get_user(user_id: int, session: AsyncSession = Depends(get_async_sessi
     return user
 
 
-@router.post("/{user_id}")
+@router.patch("/{user_id}/update-password", summary="Изменение пароля пользователя")
 async def update_user_password(
     user_id: int, new_pass: str, session: AsyncSession = Depends(get_async_session)
 ):
@@ -52,15 +54,14 @@ async def update_user_password(
 
     if user == None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
-    user.password = new_pass
+    user.hashed_password = await hashing_pass.hash_pass(new_pass)
     await session.commit()
-    return {"new_password_set": True, "user": user}
+    return {"new_password_set": True}
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", summary="Удаление пользователя")
 async def delete_user(
     user_id: int,
-    # token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(get_async_session),
 ):
     user = await session.get(User, user_id)
@@ -70,3 +71,11 @@ async def delete_user(
     await session.delete(user)
     await session.commit()
     return {"succes_delete": True}
+
+
+# @router.("/")
+# async def (
+#     user_id: int,
+#     session: AsyncSession = Depends(get_async_session),
+# ):
+#     pass
