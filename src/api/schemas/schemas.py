@@ -56,7 +56,7 @@ class ArticleBaseSchema(BaseModel):
     title: str
     content: str
     author_id: int
-    tag: int
+    tag_id: int
     category_id: int
 
     # category: CategoryBaseSchema = None

@@ -15,7 +15,7 @@ from src.api.schemas.schemas import (
 router = APIRouter(prefix="/article", tags=["Посты"])
 
 
-@router.post("")
+@router.post("", summary="Создание поста")
 async def create_article(
     article: Annotated[ArticleCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -29,13 +29,15 @@ async def create_article(
     return {"success": True, "article": article}
 
 
-@router.get("", response_model=list[ArticleSchema])
+@router.get("", response_model=list[ArticleSchema], summary="Получение всех постов")
 async def get_all_articles(session: AsyncSession = Depends(get_async_session)):
     articles = await session.execute(select(Article))
     return articles.scalars().all()
 
 
-@router.get("/{article_id}", response_model=ArticleSchema)
+@router.get(
+    "/{article_id}", response_model=ArticleSchema, summary="Получение одного поста"
+)
 async def get_article(
     article_id: int, session: AsyncSession = Depends(get_async_session)
 ):
@@ -46,20 +48,29 @@ async def get_article(
     return article
 
 
-@router.post("/{article_id}")
+@router.patch(
+    "/{article_id}", response_model=ArticleBaseSchema, summary="Изменение поста"
+)
 async def update_article_name(
-    article_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
+    article_id: int,
+    article_update: ArticleBaseSchema,
+    session: AsyncSession = Depends(get_async_session),
 ):
     article = await session.get(Article, article_id)
 
     if article == None:
         raise HTTPException(status_code=404, detail="Пост не найден")
-    article.name = new_name
+
+    article_data = article_update.model_dump(exclude_unset=True)
+    for key, value in article_data.items():
+        setattr(article, key, value)
+
     await session.commit()
+    await session.refresh(article)
     return {"new_article_set": True, "article": article}
 
 
-@router.delete("/{article_id}")
+@router.delete("/{article_id}", summary="Удаление поста")
 async def delete_article(
     article_id: int, session: AsyncSession = Depends(get_async_session)
 ):
