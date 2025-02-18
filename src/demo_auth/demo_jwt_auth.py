@@ -9,7 +9,8 @@ from src.auth import utils as auth_utils
 from pydantic import BaseModel
 from jwt import InvalidTokenError
 
-http_bearer = HTTPBearer()
+# http_bearer = HTTPBearer()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/jwt/login")
 
 
 class TokenInfo(BaseModel):
@@ -41,7 +42,7 @@ def validate_auth_user(
 ):
     unauth_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="invali username or paswsoerd",
+        detail="invali username or password",
     )
     if not (user := users_db.get(username)):
         raise unauth_exc
@@ -62,11 +63,14 @@ def validate_auth_user(
 
 
 def get_current_token_payload(  # функция для получения payload токена
-    credentials: HTTPAuthorizationCredentials = Depends(
-        http_bearer
-    ),  # Мы берем payload токена из заголовков запроса вот от сюда "credentials"
+    # credentials: HTTPAuthorizationCredentials = Depends(
+    #     http_bearer
+    # ),  # Мы берем payload токена из заголовков запроса вот от сюда "credentials"
+    token: str = Depends(
+        oauth2_scheme
+    ),  # здесь токен у нас сам автоматически по-новому обновляется
 ) -> UserSchemaTest:
-    token = credentials.credentials
+    # token = credentials.credentials
     try:
         payload = auth_utils.decode_jwt(
             token=token,
@@ -105,7 +109,7 @@ def get_current_active_auth_user(
     )
 
 
-@router.post("/login", response_model=TokenInfo)
+@router.post("/login/", response_model=TokenInfo)
 def auth_user_issue_jwt(
     user: UserSchemaTest = Depends(validate_auth_user),
 ):
