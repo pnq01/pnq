@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from src.db.models import CheckAuthor, IsPublished, User
 
 
@@ -19,6 +19,15 @@ class UserSchema(UserBaseSchema):
     is_author: CheckAuthor
 
 
+# ----
+class UserSchemaTest(BaseModel):
+    username: str
+    password: bytes
+    email: EmailStr | None = None
+    active: bool = True
+
+
+# ----
 # Категории
 class CategoryBaseSchema(BaseModel):
     name: str
