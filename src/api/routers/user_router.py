@@ -6,8 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.schemas.schemas import UserCreateSchema, UserSchema
 from src.db.models import User
 from src.db.database import get_async_session
-from src.services.auth import hashing_pass
-
+from src.demo_auth import hashing_pass_old_to_delete
 
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 
