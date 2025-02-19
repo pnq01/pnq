@@ -1,0 +1,29 @@
+version: '3.12'
+
+services:
+  app:
+    container_name: journalblog
+    build: ./
+    depends_on:
+      - db
+    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8000'
+    volumes:
+      - ./app:/journalblog
+    ports:
+      - ${APP_HOST_PORT}:8000
+    restart: always
+    env_file:
+      - .env
+
+  db:
+    container_name: journalblog-postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=journalblog
+      - POSTGRES_USER=${POSTGRES_DB_USER} # DB_USER
+      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD} # DB_PASS
+    ports:
+      - ${POSTGRES_DB_HOST_PORT}:5432
+    volumes:
+      - .postgres:/var/lib/postgres/data
+    restart: always
