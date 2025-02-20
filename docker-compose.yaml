@@ -2,28 +2,35 @@ version: '3.12'
 
 services:
   app:
-    container_name: journalblog
-    build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app
     depends_on:
       - db
-    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8000'
     volumes:
-      - ./app:/journalblog
+      - .:/app
     ports:
-      - ${APP_HOST_PORT}:8000
+      - 8000:8000
     restart: always
     env_file:
       - .env
-
   db:
-    container_name: journalblog-postgres
-    image: postgres
-    environment:
-      - POSTGRES_USER=journalblog
-      - POSTGRES_USER=${POSTGRES_DB_USER} # DB_USER
-      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD} # DB_PASS
-    ports:
-      - ${POSTGRES_DB_HOST_PORT}:5432
-    volumes:
-      - .postgres:/var/lib/postgres/data
+    image: postgres:15-alpine
+    container_name: postgres_db
     restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-journalblog}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-journalblog}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db_ 
