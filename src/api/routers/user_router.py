@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.schemas.schemas import UserCreateSchema, UserSchema
 from src.db.models import User
 from src.db.database import get_async_session
-from src.demo_auth import hashing_pass_old_to_delete
+from src.auth.utils import hash_password
 
 router = APIRouter(prefix="/user", tags=["Пользователи"])
 
@@ -19,7 +19,7 @@ async def create_user(
     user_dict: dict = user.model_dump()
     print(user_dict)
     pass_to_change = user_dict["hashed_password"]
-    user_dict["hashed_password"] = await hashing_pass.hash_pass(pass_to_change)
+    user_dict["hashed_password"] = hash_password(pass_to_change)
 
     user_model = User(**user_dict)
     session.add(user_model)
@@ -53,7 +53,7 @@ async def update_user_password(
 
     if user == None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
-    user.hashed_password = await hashing_pass.hash_pass(new_pass)
+    user.hashed_password = hash_password(new_pass)
     await session.commit()
     return {"new_password_set": True}
 
