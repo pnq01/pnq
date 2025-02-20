@@ -9,7 +9,6 @@ from src.auth import utils as auth_utils
 from pydantic import BaseModel
 from jwt import InvalidTokenError
 
-# http_bearer = HTTPBearer()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/jwt/login")
 
 
