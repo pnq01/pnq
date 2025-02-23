@@ -23,7 +23,7 @@ router = APIRouter(prefix="/jwt", tags=["JWT"])
 john = UserSchemaTest(
     username="john",
     password=auth_utils.hash_password("qwerty"),
-    email="danpavkzm@ail.ru",
+    email="danpavkzm@mail.ru",
 )
 
 sam = UserSchemaTest(
