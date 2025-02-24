@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     <title>Авторизация</title>
 </head>
 <body>
@@ -15,12 +15,12 @@
         <form action="/jwt/login/" method="post">
         <div class="input-box">
             <label>
-                <input type="text" class="input-field" placeholder="username" autocomplete="on" required>
+                <input type="text" class="input-field" placeholder="Имя пользователя" name="username" autocomplete="on" required>
             </label>
         </div>
         <div class="input-box">
             <label>
-                <input type="password" class="input-field" placeholder="password" autocomplete="on" required>
+                <input type="password" class="input-field" placeholder="Пароль" name="password" autocomplete="on" required>
             </label>
         </div>
         <div class="forgot">
@@ -33,7 +33,7 @@
             </section>
         </div>
         <div class="input-submit">
-            <button class="submit-btn" id="submit"></button>
+            <button class="submit-btn" id="submit" type="submit"></button> <!-- Добавлен type="submit" -->
             <label for="submit">Войти</label>
         </div>
         <div class="sign-up-link">
