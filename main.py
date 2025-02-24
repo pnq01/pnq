@@ -24,7 +24,10 @@ app.include_router(auth_jwt_router)
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse(
-        "index.html", {"request": request, "journalblog": "website"}
+        "home.html",
+        {
+            "request": request,
+        },
     )
 
 
