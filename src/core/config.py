@@ -1,6 +1,8 @@
 from pathlib import Path
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -30,3 +32,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+templates = Jinja2Templates(directory="templates")
+static_files = StaticFiles(directory="static")

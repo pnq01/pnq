@@ -1,19 +1,16 @@
+import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
-
 from src.api.routers.user_router import router as user_router
 from src.api.routers.tag_router import router as tag_router
 from src.api.routers.category_router import router as category_router
 from src.api.routers.article_router import router as article_router
+from src.core.config import static_files, templates
 from src.demo_auth.demo_jwt_auth import router as auth_jwt_router
 
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
+app.mount("/static", static_files, name="static")
 app.include_router(user_router)
 app.include_router(tag_router)
 app.include_router(category_router)
@@ -31,5 +28,5 @@ async def root(request: Request):
     )
 
 
-# if __name__ == "__main__":
-#     uvicorn.run(app)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
