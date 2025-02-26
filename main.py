@@ -1,5 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+
 from src.api.routers.user_router import router as user_router
 from src.api.routers.tag_router import router as tag_router
 from src.api.routers.category_router import router as category_router
@@ -9,6 +11,11 @@ from src.demo_auth.demo_jwt_auth import router as auth_jwt_router
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+)
 
 app.mount("/static", static_files, name="static")
 app.include_router(user_router)
