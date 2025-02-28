@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,7 @@ from src.db.models import User
 from src.db.database import get_async_session
 from src.auth.utils import hash_password
 
-router = APIRouter(prefix="/user", tags=["Пользователи"])
+router = APIRouter(prefix="/users", tags=["Пользователи"])
 
 
 @router.post("", summary="Создание пользователя")
@@ -29,8 +29,12 @@ async def create_user(
 
 
 @router.get("", response_model=list[UserSchema], summary="Получение всех пользователей")
-async def get_all_users(session: AsyncSession = Depends(get_async_session)):
-    users = await session.execute(select(User))
+async def get_all_users(
+    session: AsyncSession = Depends(get_async_session),
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    users = await session.execute(select(User).offset(offset).limit(limit))
     return users.scalars().all()
 
 
@@ -51,7 +55,7 @@ async def update_user_password(
 ):
     user = await session.get(User, user_id)
 
-    if user == None:
+    if user is None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     user.hashed_password = hash_password(new_pass)
     await session.commit()
@@ -70,11 +74,3 @@ async def delete_user(
     await session.delete(user)
     await session.commit()
     return {"succes_delete": True}
-
-
-# @router.("/")
-# async def (
-#     user_id: int,
-#     session: AsyncSession = Depends(get_async_session),
-# ):
-#     pass

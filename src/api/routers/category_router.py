@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 
 from sqlalchemy import select
@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.models import Category
 
-router = APIRouter(prefix="/category", tags=["Категории"])
+router = APIRouter(prefix="/categorys", tags=["Категории"])
 
 
 @router.post("", summary="Создание категории")
@@ -27,8 +27,12 @@ async def create_category(
 
 
 @router.get("", response_model=list[CategorySchema], summary="Получение всех категорий")
-async def get_all_categorys(session: AsyncSession = Depends(get_async_session)):
-    categorys = await session.execute(select(Category))
+async def get_all_categorys(
+    session: AsyncSession = Depends(get_async_session),
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    categorys = await session.execute(select(Category).offset(offset).limit(limit))
     return categorys.scalars().all()
 
 

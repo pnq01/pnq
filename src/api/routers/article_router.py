@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 
 from sqlalchemy import select
@@ -12,7 +12,7 @@ from src.api.schemas.schemas import (
     ArticleSchema,
 )
 
-router = APIRouter(prefix="/article", tags=["Посты"])
+router = APIRouter(prefix="/articles", tags=["Посты"])
 
 
 @router.post("", summary="Создание поста")
@@ -30,8 +30,12 @@ async def create_article(
 
 
 @router.get("", response_model=list[ArticleSchema], summary="Получение всех постов")
-async def get_all_articles(session: AsyncSession = Depends(get_async_session)):
-    articles = await session.execute(select(Article))
+async def get_all_articles(
+    session: AsyncSession = Depends(get_async_session),
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    articles = await session.execute(select(Article).offset(offset).limit(limit))
     return articles.scalars().all()
 
 

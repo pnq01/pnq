@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +7,7 @@ from src.api.schemas.schemas import TagBaseSchema, TagCreateSchema, TagSchema
 from src.db.models import Tag
 from src.db.database import get_async_session
 
-router = APIRouter(prefix="/tag", tags=["Тэги"])
+router = APIRouter(prefix="/tags", tags=["Тэги"])
 
 
 @router.post("", summary="Создание тэга")
@@ -25,8 +25,12 @@ async def create_tag(
 
 
 @router.get("", response_model=list[TagSchema], summary="Получение всех тэгов")
-async def get_all_tags(session: AsyncSession = Depends(get_async_session)):
-    tags = await session.execute(select(Tag))
+async def get_all_tags(
+    session: AsyncSession = Depends(get_async_session),
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    tags = await session.execute(select(Tag).offset(offset).limit(limit))
     return tags.scalars().all()
 
 
@@ -39,7 +43,7 @@ async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session
     return tag
 
 
-@router.patch("/{tag_id}", summary="Изменение имени тэга \\\ удалить если не нужно")
+@router.patch("/{tag_id}", summary="Изменение имени тэга удалить если не нужно")
 async def update_tag_name(
     tag_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
 ):
