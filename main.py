@@ -4,17 +4,17 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api_v1.crud.demo_auto_crud import demo_m2m
-from src.api_v1.routers.user_router import router as user_router
-from src.api_v1.routers.tag_router import router as tag_router
-from src.api_v1.routers.category_router import router as category_router
-from src.api_v1.routers.article_router import router as article_router
+from src.api_v1.routers import router
 from src.core.config import static_files, templates
 from src.db.database import (
-    drop_tables,
-    create_tables,
     async_session_factory,
 )
-from src.demo_auth.demo_jwt_auth import router as auth_jwt_router
+
+# from src.api_v1.routers.user_router import router as user_router
+# from src.api_v1.routers.tag_router import router as tag_router
+# from src.api_v1.routers.category_router import router as category_router
+# from src.api_v1.routers.article_router import router as article_router
+# from src.demo_auth.demo_jwt_auth import router as auth_jwt_router
 
 
 app = FastAPI(
@@ -32,11 +32,11 @@ app.add_middleware(
 )
 
 app.mount("/static", static_files, name="static")
-app.include_router(user_router)
-app.include_router(tag_router)
-app.include_router(category_router)
-app.include_router(article_router)
-app.include_router(auth_jwt_router)
+app.include_router(router)
+# app.include_router(tag_router)
+# app.include_router(category_router)
+# app.include_router(article_router)
+# app.include_router(auth_jwt_router)
 
 
 # Переработать так как это SSR а нам нужно полностью по rest api_v1
