@@ -1,11 +1,12 @@
 from datetime import datetime
+
 from sqlalchemy import (
-    ForeignKey,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
+from .association_tables import user_article_association_table
 from .database import Base
 
 
@@ -15,17 +16,16 @@ class CheckAuthor(str, enum.Enum):
 
 
 class User(Base):
-    __tablename__ = "user"
-    __table_args__ = {"extend_existing": True}
+    __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     login: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     is_author: Mapped[CheckAuthor] = mapped_column(default=CheckAuthor.not_author)
 
-    # articles: Mapped[list["Article"]] = relationship(
-    #     back_populates="user",
-    # )
+    articles: Mapped[list["Article"]] = relationship(
+        secondary=user_article_association_table,
+        back_populates="users",
+    )
 
 
 class IsPublished(enum.Enum):
@@ -34,53 +34,26 @@ class IsPublished(enum.Enum):
 
 
 class Tag(Base):
-    __tablename__ = "tag"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
     tag: Mapped[str] = mapped_column(nullable=False, index=True)
-
-    # articles: Mapped[list["Article"]] = relationship(
-    #     back_populates="mark_tags",
-    #     secondary="article_tag",
-    # )
 
 
 class Category(Base):
-    __tablename__ = "category"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False, index=True)
-
-    # articles: Mapped[list["Article"]] = relationship(back_populates="category")
 
 
 class Article(Base):
-    __tablename__ = "article"
-    __table_args__ = {"extend_existing": True}
+    __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(index=True)
+    title: Mapped[str] = mapped_column(index=True, nullable=False)
     content: Mapped[str] = mapped_column(nullable=False)
     is_published: Mapped[IsPublished] = mapped_column(default=IsPublished.nonpublished)
-    author_id: Mapped[int]  # = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
-    category_id: Mapped[int]  # = mapped_column(ForeignKey("category.id"))
-    tag_id: Mapped[int] = mapped_column(nullable=True)
-    date: Mapped[datetime] = mapped_column(default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(), default=datetime.now()
+    )
 
-    # category: Mapped["Category"] = relationship(back_populates="articles")
-    # user: Mapped["User"] = relationship(
-    #     back_populates="articles",
-    # )
-    # mark_tags: Mapped[list["Tag"]] = relationship(
-    #     back_populates="articles",
-    #     secondary="article_tag",
-    # )
-
-
-# class ArticleTag(Base):
-#     __tablename__ = "article_tag"
-
-#     article_id: Mapped[
-#         int
-#     ]  # = mapped_column(ForeignKey("article.id"), primary_key=True)
-#     tag_id: Mapped[int]  # = mapped_column(ForeignKey("tag.id"), primary_key=True)
+    users: Mapped[list["User"]] = relationship(
+        secondary=user_article_association_table,
+        back_populates="articles",
+    )
+    # category_id: Mapped[int]
+    # tag_id: Mapped[int]
