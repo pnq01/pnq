@@ -6,7 +6,7 @@ from src.db.models import Article
 from src.db.database import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.schemas.schemas import (
+from src.api_v1.schemas.schemas import (
     ArticleBaseSchema,
     ArticleCreateSchema,
     ArticleSchema,

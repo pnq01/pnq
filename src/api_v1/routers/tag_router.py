@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.schemas.schemas import TagBaseSchema, TagCreateSchema, TagSchema
+from src.api_v1.schemas.schemas import TagBaseSchema, TagCreateSchema, TagSchema
 from src.db.models import Tag
 from src.db.database import get_async_session
 

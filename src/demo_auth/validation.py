@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from starlette import status
 
-from src.api.schemas.schemas import UserSchemaTest
+from src.api_v1.schemas.schemas import UserSchemaTest
 from src.auth import utils as auth_utils
 from src.demo_auth.crud import users_db
 from src.demo_auth.helpers import (

@@ -1,4 +1,4 @@
-from src.api.schemas.schemas import UserSchemaTest
+from src.api_v1.schemas.schemas import UserSchemaTest
 from src.auth import utils as auth_utils
 
 john = UserSchemaTest(
