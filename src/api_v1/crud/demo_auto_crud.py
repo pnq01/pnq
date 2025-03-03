@@ -1,4 +1,5 @@
 import asyncio
+from token import AWAIT
 
 from fastapi import Depends
 from sqlalchemy import select
@@ -83,6 +84,7 @@ async def get_users_with_articles(session: AsyncSession) -> list[User]:
 async def demo_m2m(
     session: AsyncSession,
 ):
+    # await main_relations(session)
     users = await get_users_with_articles(session)
     for user in users:
         print(user.login, user.hashed_password, "articles:")

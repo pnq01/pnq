@@ -6,7 +6,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from .association_tables import user_article_association_table
+from .association_tables import UserArticleAssociation
 from .database import Base
 
 
@@ -16,14 +16,14 @@ class CheckAuthor(str, enum.Enum):
 
 
 class User(Base):
-    __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
+    # __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
 
     login: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     is_author: Mapped[CheckAuthor] = mapped_column(default=CheckAuthor.not_author)
 
     articles: Mapped[list["Article"]] = relationship(
-        secondary=user_article_association_table,
+        secondary="user_article_association",
         back_populates="users",
     )
 
@@ -42,7 +42,7 @@ class Category(Base):
 
 
 class Article(Base):
-    __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
+    # __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
 
     title: Mapped[str] = mapped_column(index=True, nullable=False)
     content: Mapped[str] = mapped_column(nullable=False)
@@ -52,7 +52,7 @@ class Article(Base):
     )
 
     users: Mapped[list["User"]] = relationship(
-        secondary=user_article_association_table,
+        secondary="user_article_association",
         back_populates="articles",
     )
     # category_id: Mapped[int]
