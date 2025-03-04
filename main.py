@@ -10,13 +10,6 @@ from src.db.database import (
     async_session_factory,
 )
 
-# from src.api_v1.routers.user_router import router as user_router
-# from src.api_v1.routers.tag_router import router as tag_router
-# from src.api_v1.routers.category_router import router as category_router
-# from src.api_v1.routers.article_router import router as article_router
-# from src.demo_auth.demo_jwt_auth import router as auth_jwt_router
-
-
 app = FastAPI(
     title="Journal Blog",
     contact={
@@ -33,13 +26,8 @@ app.add_middleware(
 
 app.mount("/static", static_files, name="static")
 app.include_router(router)
-# app.include_router(tag_router)
-# app.include_router(category_router)
-# app.include_router(article_router)
-# app.include_router(auth_jwt_router)
 
-
-# Переработать так как это SSR а нам нужно полностью по rest api_v1
+# Переработать так как это SSR а нам нужно полностью по rest api
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse(
