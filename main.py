@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api_v1.crud.demo_auto_crud import demo_m2m
-from src.api_v1.routers import router
+from src.api_v1.routers import router as main_router
 from src.core.config import static_files, templates
 from src.db.database import (
     async_session_factory,
@@ -25,7 +25,8 @@ app.add_middleware(
 )
 
 app.mount("/static", static_files, name="static")
-app.include_router(router)
+app.include_router(main_router)
+
 
 # Переработать так как это SSR а нам нужно полностью по rest api
 @app.get("/")
