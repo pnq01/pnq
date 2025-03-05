@@ -1,6 +1,4 @@
 import asyncio
-from token import AWAIT
-
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
