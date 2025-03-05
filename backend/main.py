@@ -24,7 +24,7 @@ app.add_middleware(
     allow_origins=["*"],
 )
 
-app.mount("/static", static_files, name="static")
+app.mount("static", static_files, name="static")
 app.include_router(main_router)
 
 
