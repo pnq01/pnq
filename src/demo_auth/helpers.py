@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from src.api_v1.schemas.schemas import UserSchemaTest
 from src.auth import utils as auth_utils
-from src.core.config import settings
+from config import settings
 
 TOKEN_TYPE_FIELD = "type"
 ACCESS_TOKEN_TYPE = "access"

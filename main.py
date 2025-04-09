@@ -1,14 +1,13 @@
-import asyncio
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api_v1.crud.demo_auto_crud import demo_m2m
 from src.api_v1.routers import router as main_router
+
+# from src.api_v1.crud.demo_auto_crud import demo_m2m
 # from src.core.config import static_files, templates
-from src.db.database import (
-    async_session_factory,
-)
+# from src.db.database import async_session_factory
+
 
 app = FastAPI(
     title="Journal Blog",
@@ -28,7 +27,6 @@ app.add_middleware(
 app.include_router(main_router)
 
 
-# Переработать так как это SSR а нам нужно полностью по rest api
 @app.get("/")
 async def root(request: Request):
     # return templates.TemplateResponse(
