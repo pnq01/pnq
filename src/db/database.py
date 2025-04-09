@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
-from src.core.config import settings
 
 
 class Base(DeclarativeBase):
@@ -16,31 +15,20 @@ class Base(DeclarativeBase):
 DATABASE_URL = "sqlite+aiosqlite:///./test.db"  # ДЛЯ SQLITE ТЕСТОВ позже поменять
 
 
+# async_engine = create_async_engine(url=settings.DATABASE_URL_asyncpg, echo=True) # POSTGRESQL
+# async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False) # POSTGRESQL
+async_engine = create_async_engine(url=DATABASE_URL, echo=True)  # sqlite
+async_session_factory = async_sessionmaker(
+    async_engine, expire_on_commit=False
+)  # sqlite
+
+
+# потом удалить
 async def create_tables():
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
 
-# Асинхронная функция для удаления таблиц
-async def drop_tables():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-
-
-# async_engine = create_async_engine(url=settings.DATABASE_URL_asyncpg, echo=True)
-# async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
-async_engine = create_async_engine(url=DATABASE_URL, echo=True)
-async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
-
-
-# Потом удалить
-# Асинхронная функция для создания таблиц
-async def create_tables():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-# Асинхронная функция для удаления таблиц
 async def drop_tables():
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
