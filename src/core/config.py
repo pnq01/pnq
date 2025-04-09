@@ -32,5 +32,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-templates = Jinja2Templates(directory="templates")
-static_files = StaticFiles(directory="static")
+# templates = Jinja2Templates(directory="templates")
+# static_files = StaticFiles(directory="static")

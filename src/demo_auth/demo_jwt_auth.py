@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from src.api_v1.schemas.schemas import UserSchemaTest
 from pydantic import BaseModel
 
-from src.core.config import templates
+# from src.core.config import templates
 from src.demo_auth.helpers import (
     create_access_token,
     create_refresh_token,
@@ -41,7 +41,7 @@ router = APIRouter(
 def get_login_page(
     request: Request,
 ):
-    return templates.TemplateResponse("login.html", {"request": request})
+    pass #templates.TemplateResponse("login.html", {"request": request})
 
 
 @router.post(
