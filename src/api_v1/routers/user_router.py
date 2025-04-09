@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api_v1.schemas.schemas import UserCreateSchema, UserSchema
+
 from src.db.models import User
 from src.db.database import get_async_session
 from src.auth.utils import hash_password
@@ -49,17 +50,17 @@ async def get_user(user_id: int, session: AsyncSession = Depends(get_async_sessi
     return user
 
 
-@router.patch("/{user_id}/update-password", summary="Изменение пароля пользователя")
-async def update_user_password(
-    user_id: int, new_pass: str, session: AsyncSession = Depends(get_async_session)
-):
-    user = await session.get(User, user_id)
-
-    if user is None:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
-    user.hashed_password = hash_password(new_pass)
-    await session.commit()
-    return {"new_password_set": True}
+# @router.patch("/{user_id}/update-password", summary="Изменение пароля пользователя")
+# async def update_user_password(
+#     user_id: int, new_pass: str, session: AsyncSession = Depends(get_async_session)
+# ):
+#     user = await session.get(User, user_id)
+#
+#     if user is None:
+#         raise HTTPException(status_code=404, detail="Пользователь не найден")
+#     user.hashed_password = hash_password(new_pass)
+#     await session.commit()
+#     return {"new_password_set": True}
 
 
 @router.delete("/{user_id}", summary="Удаление пользователя")

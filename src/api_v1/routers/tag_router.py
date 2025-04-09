@@ -3,14 +3,14 @@ from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api_v1.schemas.schemas import TagBaseSchema, TagCreateSchema, TagSchema
+from src.api_v1.schemas.schemas import TagCreateSchema, TagSchema
 from src.db.models import Tag
 from src.db.database import get_async_session
 
 router = APIRouter(prefix="/tags", tags=["Тэги"])
 
 
-@router.post("", summary="Создание тэга")
+@router.post("", summary="Создание тега")
 async def create_tag(
     tag: Annotated[TagCreateSchema, Depends()],
     session: AsyncSession = Depends(get_async_session),
@@ -24,7 +24,7 @@ async def create_tag(
     return {"success": True, "tag": tag}
 
 
-@router.get("", response_model=list[TagSchema], summary="Получение всех тэгов")
+@router.get("", response_model=list[TagSchema], summary="Получение всех тегов")
 async def get_all_tags(
     session: AsyncSession = Depends(get_async_session),
     offset: int = 0,
@@ -34,7 +34,7 @@ async def get_all_tags(
     return tags.scalars().all()
 
 
-@router.get("/{tag_id}", response_model=TagSchema, summary="Получение одного тэга")
+@router.get("/{tag_id}", response_model=TagSchema, summary="Получение одного тега")
 async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session)):
     tag = await session.get(Tag, tag_id)
 
@@ -43,17 +43,17 @@ async def get_tag(tag_id: int, session: AsyncSession = Depends(get_async_session
     return tag
 
 
-@router.patch("/{tag_id}", summary="Изменение имени тэга удалить если не нужно")
-async def update_tag_name(
-    tag_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
-):
-    tag = await session.get(Tag, tag_id)
-
-    if tag == None:
-        raise HTTPException(status_code=404, detail="Тег не найден")
-    tag.tag = new_name
-    await session.commit()
-    return {"new_tag_set": True, "tag": tag}
+# @router.patch("/{tag_id}", summary="Изменение имени тега удалить если не нужно")
+# async def update_tag_name(
+#     tag_id: int, new_name: str, session: AsyncSession = Depends(get_async_session)
+# ):
+#     tag = await session.get(Tag, tag_id)
+#
+#     if tag == None:
+#         raise HTTPException(status_code=404, detail="Тег не найден")
+#     tag.tag = new_name
+#     await session.commit()
+#     return {"new_tag_set": True, "tag": tag}
 
 
 @router.delete("/{tag_id}", summary="Удаление тэга")
