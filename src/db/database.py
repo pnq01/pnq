@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 
+from config import BASE_DIR
+
 
 class Base(DeclarativeBase):
     __abstract__ = True
@@ -12,7 +14,7 @@ class Base(DeclarativeBase):
     id: Mapped[int] = mapped_column(primary_key=True)
 
 
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"  # для sqlite
+DATABASE_URL = f"sqlite+aiosqlite:///{BASE_DIR}/test.db"  # для sqlite
 
 
 # async_engine = create_async_engine(url=settings.DATABASE_URL_asyncpg, echo=True) # POSTGRESQL
