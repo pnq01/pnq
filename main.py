@@ -1,8 +1,12 @@
+import asyncio
+
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api_v1.crud.demo_auto_crud import demo_m2m
 from src.api_v1.routers import router as main_router
+from src.db.database import drop_tables, create_tables, async_session_factory
 
 # from src.api_v1.crud.demo_auto_crud import demo_m2m
 # from src.core.config import static_files, templates
@@ -35,7 +39,7 @@ async def root(request: Request):
     #         "request": request,
     #     },
     # )
-    return {"Hello": "World"}
+    return {"info": "journalblog"}
 
 
 async def db_moves():
