@@ -2,28 +2,34 @@ from datetime import datetime
 
 from sqlalchemy import (
     func,
+    ForeignKey,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from .database import Base
+from src.db.association_tables import (
+    UserArticleAssociation,
+    ArticleTagAssociation,
+)
+from src.db.database import Base
 
 
 class CheckAuthor(str, enum.Enum):
-    author = "yes"
-    not_author = "no"
+    author = "author"
+    not_author = "not author"
 
 
 class User(Base):
     # __table_args__ = {"extend_existing": True}  # можно удалить при алембике вроде
 
-    login: Mapped[str] = mapped_column(unique=True)
-    hashed_password: Mapped[str] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True)
+    hashed_password: Mapped[str]
     is_author: Mapped[CheckAuthor] = mapped_column(default=CheckAuthor.not_author)
 
-    articles: Mapped[list["Article"]] = relationship(
+    article: Mapped[list["Article"]] = relationship(
         secondary="user_article_association",
-        back_populates="users",
+        back_populates="user",
     )
 
 
@@ -33,11 +39,18 @@ class IsPublished(enum.Enum):
 
 
 class Tag(Base):
-    tag: Mapped[str] = mapped_column(nullable=False, index=True)
+    name: Mapped[str] = mapped_column(nullable=False, index=True)
+
+    article: Mapped[list["Article"]] = relationship(
+        secondary="article_tag_association",
+        back_populates="tag",
+    )
 
 
 class Category(Base):
     name: Mapped[str] = mapped_column(nullable=False, index=True)
+
+    article: Mapped[list["Article"]] = relationship(back_populates="category")
 
 
 class Article(Base):
@@ -50,9 +63,17 @@ class Article(Base):
         server_default=func.now(), default=datetime.now()
     )
 
-    users: Mapped[list["User"]] = relationship(
+    user: Mapped[list["User"]] = relationship(
         secondary="user_article_association",
-        back_populates="articles",
+        back_populates="article",
     )
-    # category_id: Mapped[int]
-    # tag_id: Mapped[int]
+
+    category_id: Mapped[int] = mapped_column(
+        ForeignKey("categorys.id"),
+    )
+    category: Mapped["Category"] = relationship(back_populates="article")
+
+    tag: Mapped[list["Tag"]] = relationship(
+        secondary="article_tag_association",
+        back_populates="article",
+    )
