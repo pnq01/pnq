@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.models import Category
 
-router = APIRouter(prefix="/categorys", tags=["Категории"])
+router = APIRouter(prefix="/categories", tags=["Категории"])
 
 
 @router.post("", summary="Создание категории")
@@ -23,17 +23,17 @@ async def create_category(
     session.add(category_model)
     await session.commit()
 
-    return {"success": True, "category": category}
+    return {"success": True, "category": category.name}
 
 
 @router.get("", response_model=list[CategorySchema], summary="Получение всех категорий")
-async def get_all_categorys(
+async def get_all_categories(
     session: AsyncSession = Depends(get_async_session),
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ):
-    categorys = await session.execute(select(Category).offset(offset).limit(limit))
-    return categorys.scalars().all()
+    categories = await session.execute(select(Category).offset(offset).limit(limit))
+    return categories.scalars().all()
 
 
 @router.get(
@@ -45,7 +45,7 @@ async def get_category(
     category = await session.get(Category, category_id)
 
     if not category:
-        raise HTTPException(status_code=404, detail="Сотрудник не найден")
+        raise HTTPException(status_code=404, detail="Категория не найдена")
     return category
 
 
@@ -68,8 +68,8 @@ async def delete_category(
 ):
     category = await session.get(Category, category_id)
 
-    if category == None:
-        raise HTTPException(status_code=404, detail="Тег не найден")
+    if category is None:
+        raise HTTPException(status_code=404, detail="Категория не найдена")
     await session.delete(category)
     await session.commit()
-    return {"succes_delete": True}
+    return {"success_delete": True}
