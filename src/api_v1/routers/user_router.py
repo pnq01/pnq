@@ -18,15 +18,14 @@ async def create_user(
     session: AsyncSession = Depends(get_async_session),
 ):
     user_dict: dict = user.model_dump()
-    print(user_dict)
-    pass_to_change = user_dict["hashed_password"]
-    user_dict["hashed_password"] = hash_password(pass_to_change)
+    pass_to_change = user_dict["password"]
+    user_dict["password"] = hash_password(pass_to_change)
 
     user_model = User(**user_dict)
     session.add(user_model)
     await session.commit()
 
-    return {"success": True, "user": user_dict["login"]}
+    return {"success": True, "user": user_dict["username"]}
 
 
 @router.get("", response_model=list[UserSchema], summary="Получение всех пользователей")
@@ -70,8 +69,8 @@ async def delete_user(
 ):
     user = await session.get(User, user_id)
 
-    if user == None:
+    if user is None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     await session.delete(user)
     await session.commit()
-    return {"succes_delete": True}
+    return {"success_delete": True}
