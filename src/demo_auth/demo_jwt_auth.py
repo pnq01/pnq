@@ -41,7 +41,7 @@ router = APIRouter(
 def get_login_page(
     request: Request,
 ):
-    pass #templates.TemplateResponse("login.html", {"request": request})
+    pass  # templates.TemplateResponse("login.html", {"request": request})
 
 
 @router.post(
