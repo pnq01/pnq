@@ -4,26 +4,28 @@ from src.db.models import CheckAuthor, IsPublished, User
 
 # Пользователи
 class UserBaseSchema(BaseModel):
-    login: str
+    username: str
+    email: EmailStr
 
     class Config:
         from_attributes = True
 
 
 class UserCreateSchema(UserBaseSchema):
-    hashed_password: str
+    password: str
 
 
 class UserSchema(UserBaseSchema):
     id: int
     is_author: CheckAuthor
+    # articles добавить для вывода постов пользователя мб
 
 
 # ----
 class UserSchemaTest(BaseModel):
     username: str
     password: bytes
-    email: EmailStr | None = None
+    email: EmailStr
     active: bool = True
 
 
@@ -46,7 +48,7 @@ class CategorySchema(CategoryBaseSchema):
 
 # Теги
 class TagBaseSchema(BaseModel):
-    tag: str
+    name: str
 
     class Config:
         from_attributes = True
@@ -64,13 +66,12 @@ class TagSchema(TagBaseSchema):
 class ArticleBaseSchema(BaseModel):
     title: str
     content: str
-    author_id: int
     tag_id: int
     category_id: int
 
     # category: CategoryBaseSchema = None
     # user: UserBaseSchema = None
-    # mark_tags: list[TagBaseSchema] = []
+    # tag: list[TagBaseSchema] = []
 
     class Config:
         from_attributes = True

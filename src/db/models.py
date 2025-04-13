@@ -24,7 +24,7 @@ class User(Base):
 
     username: Mapped[str] = mapped_column(unique=True)
     email: Mapped[str] = mapped_column(unique=True)
-    hashed_password: Mapped[str]
+    password: Mapped[str]
     is_author: Mapped[CheckAuthor] = mapped_column(default=CheckAuthor.not_author)
 
     article: Mapped[list["Article"]] = relationship(
