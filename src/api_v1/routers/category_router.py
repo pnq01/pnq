@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Annotated
 
 from sqlalchemy import select
-from src.api_v1.schemas.schemas import CategoryCreateSchema, CategorySchema
+from src.api_v1.schemas.category_schema import CategoryCreateSchema, CategorySchema
 from src.db.database import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 

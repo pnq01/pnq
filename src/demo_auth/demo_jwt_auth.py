@@ -3,7 +3,7 @@ from fastapi.security import (
     HTTPBearer,
 )
 from fastapi.responses import HTMLResponse
-from src.api_v1.schemas.schemas import UserSchemaTest
+from src.api_v1.schemas.user_schema import UserSchemaTest
 from pydantic import BaseModel
 
 # from src.core.config import templates

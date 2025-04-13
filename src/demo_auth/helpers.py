@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from src.api_v1.schemas.schemas import UserSchemaTest
+from src.api_v1.schemas.user_schema import UserSchemaTest
 from src.auth import utils as auth_utils
 from config import settings
 
