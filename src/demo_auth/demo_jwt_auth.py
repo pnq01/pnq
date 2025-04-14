@@ -35,7 +35,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/login/",
+    "/login",
     response_class=HTMLResponse,
 )
 def get_login_page(
@@ -45,7 +45,7 @@ def get_login_page(
 
 
 @router.post(
-    "/login/",
+    "/login",
     response_model=TokenInfo,
 )
 def auth_user_issue_jwt(
@@ -60,7 +60,7 @@ def auth_user_issue_jwt(
 
 
 @router.post(
-    "/refresh/",
+    "/refresh",
     response_model=TokenInfo,
     response_model_exclude_none=True,
 )
@@ -73,7 +73,7 @@ def auth_refresh_jwt(
     )
 
 
-@router.get("/users/me/")  # Проверка информации о текущем пользователе
+@router.get("/users/me")  # Проверка информации о текущем пользователе
 def auth_user_check_self_info(
     payload: dict = Depends(get_current_token_payload),
     user: UserSchemaTest = Depends(
