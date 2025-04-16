@@ -39,7 +39,7 @@ class IsPublished(enum.Enum):
 
 
 class Tag(Base):
-    name: Mapped[str] = mapped_column(nullable=False,unique=True, index=True)
+    name: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
 
     article: Mapped[list["Article"]] = relationship(
         secondary="article_tag_association",
@@ -48,7 +48,7 @@ class Tag(Base):
 
 
 class Category(Base):
-    name: Mapped[str] = mapped_column(nullable=False,unique=True, index=True)
+    name: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)
 
     article: Mapped[list["Article"]] = relationship(back_populates="category")
 

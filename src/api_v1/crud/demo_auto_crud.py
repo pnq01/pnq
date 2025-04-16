@@ -14,7 +14,7 @@ async def create_user(
     user = User(
         username=username,
         email=email,
-        hashed_password=password,
+        password=password,
     )
 
     session.add(user)
@@ -66,8 +66,11 @@ async def create_category(
 async def main_relations(
     session: AsyncSession,
 ):
-    user_1 = await create_user("john", "qwerty", session)
-    user_2 = await create_user("sam", "secret", session)
+    user_1 = await create_user("john", "danpavkznm@mail.ru", "qwerty", session)
+    user_2 = await create_user("sam", "qaloto@mail.ru", "secret", session)
+
+    category_1 = await create_category("Дороги", session)
+    category_2 = await create_category("ПГС", session)
 
     article_1 = await create_article("Автодороги", "road road road road", session)
     article_2 = await create_article("Мосты", "Мосты Мосты Мосты Мосты", session)
@@ -75,26 +78,48 @@ async def main_relations(
     tag_1 = await create_tag("it в строительстве", session)
     tag_2 = await create_tag("Сопромат", session)
 
-    category_1 = await create_category("Дороги", session)
-    category_2 = await create_category("ПГС", session)
+    user_1 = await session.scalar(
+        select(User)
+        .where(User.id == user_1.id)
+        .options(
+            selectinload(User.article),
+        ),
+    )
+    user_2 = await session.scalar(
+        select(User)
+        .where(User.id == user_2.id)
+        .options(
+            selectinload(User.article),
+        ),
+    )
 
-    # user_1 = await session.scalar(
-    #     select(User)
-    #     .where(User.id == user_1.id)
-    #     .options(
-    #         selectinload(User.articles),
-    #     ),
-    # )
-    # user_2 = await session.scalar(
-    #     select(User)
-    #     .where(User.id == user_2.id)
-    #     .options(
-    #         selectinload(User.articles),
-    #     ),
-    # )
-    # user_1.articles.append(article_1)
-    # user_2.articles.append(article_1)
-    # user_2.articles.append(article_2)
+    article_1 = await session.scalar(
+        select(Article)
+        .where(Article.id == article_1.id)
+        .options(
+            selectinload(Article.tag),
+            selectinload(Article.category),
+        ),
+    )
+    article_2 = await session.scalar(
+        select(Article)
+        .where(Article.id == article_1.id)
+        .options(
+            selectinload(Article.tag),
+            selectinload(Article.category),
+        ),
+    )
+
+    article_1.tag.append(tag_1)
+    article_1.tag.append(tag_2)
+    article_2.tag.append(tag_1)
+
+    article_1.category_id = category_1.id
+    article_2.category_id = category_2.id
+
+    user_1.article.append(article_1)
+    user_2.article.append(article_1)
+    user_2.article.append(article_2)
 
     await session.commit()
 
@@ -104,6 +129,8 @@ async def get_users_with_articles(session: AsyncSession) -> list[User]:
         select(User)
         .options(
             selectinload(User.article),
+            selectinload(Article.category),
+            selectinload(Article.tag),
         )
         .order_by(User.id)
     )
@@ -114,11 +141,9 @@ async def get_users_with_articles(session: AsyncSession) -> list[User]:
 async def demo_m2m(
     session: AsyncSession,
 ):
-    # await main_relations(session)
+    await main_relations(session)
     users = await get_users_with_articles(session)
     for user in users:
-        print(
-            user.username, user.email, user.hashed_password, user.is_author, "articles:"
-        )
+        print(user.username, user.email, user.password, user.is_author, "articles:")
         for article in user.article:
             print("-", article.title, article.content, article.created_at)
