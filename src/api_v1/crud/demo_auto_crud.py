@@ -178,5 +178,5 @@ async def demo_m2m(
     articles = await get_articles_full(session)
     for i, article in enumerate(articles):
         print(
-            f"{i+1} article: {article.title}, tags: {article.tag}, category: {article.category}"
+            f"{i+1}. Пост: {article.title}, Теги: {";".join(tag.name for tag in article.tag)}, Категории: {article.category.name}"
         )
