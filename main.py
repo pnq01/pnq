@@ -43,8 +43,8 @@ async def root(request: Request):
 
 
 async def db_moves():
-    await drop_tables()
-    await create_tables()
+    # await drop_tables()
+    # await create_tables()
     async with async_session_factory() as session:
         await demo_m2m(session)
     pass

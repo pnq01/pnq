@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
-from src.db.models import User, Article, Tag, Category
+from src.db.models import User, Article, Tag, Category, CheckAuthor
 
 
 async def create_user(
@@ -25,11 +25,13 @@ async def create_user(
 async def create_article(
     title: str,
     content: str,
+    category_id: int,
     session: AsyncSession,
 ) -> Article:
     article = Article(
         title=title,
         content=content,
+        category_id=category_id,
     )
 
     session.add(article)
@@ -72,11 +74,21 @@ async def main_relations(
     category_1 = await create_category("Дороги", session)
     category_2 = await create_category("ПГС", session)
 
-    article_1 = await create_article("Автодороги", "road road road road", session)
-    article_2 = await create_article("Мосты", "Мосты Мосты Мосты Мосты", session)
-
     tag_1 = await create_tag("it в строительстве", session)
     tag_2 = await create_tag("Сопромат", session)
+
+    article_1 = await create_article(
+        "Автодороги",
+        "road road road road",
+        category_id=category_1.id,
+        session=session,
+    )
+    article_2 = await create_article(
+        "Мосты",
+        "Мосты Мосты Мосты Мосты",
+        category_id=category_2.id,
+        session=session,
+    )
 
     user_1 = await session.scalar(
         select(User)
@@ -103,7 +115,7 @@ async def main_relations(
     )
     article_2 = await session.scalar(
         select(Article)
-        .where(Article.id == article_1.id)
+        .where(Article.id == article_2.id)
         .options(
             selectinload(Article.tag),
             selectinload(Article.category),
@@ -114,8 +126,8 @@ async def main_relations(
     article_1.tag.append(tag_2)
     article_2.tag.append(tag_1)
 
-    article_1.category_id = category_1.id
-    article_2.category_id = category_2.id
+    # article_1.category_id = category_1.id
+    # article_2.category_id = category_2.id
 
     user_1.article.append(article_1)
     user_2.article.append(article_1)
@@ -129,21 +141,42 @@ async def get_users_with_articles(session: AsyncSession) -> list[User]:
         select(User)
         .options(
             selectinload(User.article),
-            selectinload(Article.category),
-            selectinload(Article.tag),
         )
         .order_by(User.id)
     )
-    orders = await session.scalars(stmt)
-    return list(orders)
+    data = await session.scalars(stmt)
+    return list(data)
+
+
+async def get_articles_full(session: AsyncSession) -> list[Article]:
+    stmt = (
+        select(Article)
+        .options(
+            selectinload(Article.tag),
+            joinedload(Article.category),
+        )
+        .order_by(Article.id)
+    )
+    data = await session.scalars(stmt)
+    return list(data)
 
 
 async def demo_m2m(
     session: AsyncSession,
 ):
-    await main_relations(session)
+    # await main_relations(session)
     users = await get_users_with_articles(session)
-    for user in users:
-        print(user.username, user.email, user.password, user.is_author, "articles:")
+    for i, user in enumerate(users):
+        print(
+            f"{i+1}. username: {user.username}, email: {user.email}, авторство: {user.is_author.value}, articles:",
+        )
         for article in user.article:
-            print("-", article.title, article.content, article.created_at)
+            print(
+                "-",
+                f"Заголовок - {article.title},",  # контент - {article.content}, {article.tag},{article.category},{article.created_at}",
+            )
+    articles = await get_articles_full(session)
+    for i, article in enumerate(articles):
+        print(
+            f"{i+1} article: {article.title}, tags: {article.tag}, category: {article.category}"
+        )
