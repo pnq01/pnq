@@ -30,12 +30,12 @@ A lightweight blog system built with FastAPI, supporting user registration, logi
 ```text
 fastapi_journalblog/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py              # Entry point with FastAPI app
-│   ├── models/              # SQLAlchemy models
-│   ├── routers/             # API route modules (user, blog, etc.)
-│   ├── schemas/             # Pydantic data models
-│   └── services/            # Business logic and utilities
-├── tests/                   # Unit tests
-├── requirements.txt         # Project dependencies
-└── README.md                # Project documentation
+│   ├── main.py
+│   ├── models/
+│   ├── routers/
+│   ├── schemas/
+│   └── services/
+├── tests/
+├── requirements.txt
+├── README.md
+└── README.zh.md            # 中文说明文档
