@@ -30,12 +30,12 @@
 ```text
 fastapi_journalblog/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py              # 项目入口，FastAPI 实例定义
-│   ├── models/              # SQLAlchemy 模型
-│   ├── routers/             # 路由模块（如用户、文章等）
-│   ├── schemas/             # Pydantic 数据校验模型
-│   └── services/            # 业务逻辑封装
-├── tests/                   # 单元测试目录
-├── requirements.txt         # 项目依赖
-└── README.md                # 项目说明文件
+│   ├── main.py
+│   ├── models/
+│   ├── routers/
+│   ├── schemas/
+│   └── services/
+├── tests/
+├── requirements.txt
+├── README.md
+└── README.zh.md
