@@ -38,4 +38,4 @@ fastapi_journalblog/
 ├── tests/
 ├── requirements.txt
 ├── README.md
-└── README.zh.md            # 中文说明文档
+└── README.zh.md
